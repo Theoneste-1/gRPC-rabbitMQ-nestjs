@@ -8,13 +8,19 @@ export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private readonly transporter: nodemailer.Transporter;
 
-  constructor(private readonly configService: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      host: this.configService.get<string>('SMTP_HOST', 'localhost'),
-      port: this.configService.get<number>('SMTP_PORT', 1025),
-      secure: this.configService.get<string>('SMTP_SECURE', 'false') === 'true',
-      auth: this.getAuth(),
-    });
+constructor(private readonly configService: ConfigService) {
+  this.transporter = nodemailer.createTransport({
+    // Checks for SMTP_HOST first, falls back to Gmail
+    host: this.configService.get<string>('SMTP_HOST', 'smtp.gmail.com'),
+
+    port: Number(this.configService.get<number>('SMTP_PORT', 587)),
+    secure: this.configService.get<string>('SMTP_SECURE', 'false') === 'true',
+    
+    auth: {
+      user: this.configService.get<string>('SMTP_USERNAME'),
+      pass: this.configService.get<string>('SMTP_PASSWORD'),
+    },
+  });
   }
 
   async send(message: EmailMessage): Promise<void> {
