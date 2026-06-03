@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package transaction;
+
+service TransactionService {
+  rpc EnterCar(CarEntryRequest) returns (TicketResponse);
+  rpc ExitCar(CarExitRequest) returns (BillResponse);
+  rpc GetTransactionByPlate(PlateRequest) returns (TransactionResponse);
+  rpc GetActiveTransactions(PaginationRequest) returns (PaginatedTransactions);
+  rpc GetTransactionsByDate(ReportFilter) returns (PaginatedTransactions);
+}
+
+message CarEntryRequest {
+  string plateNumber = 1;
+  string parkingCode = 2;
+  string attendantId = 3;
+  string driverEmail = 4;
+}
+
+message CarExitRequest {
+  string plateNumber = 1;
+  string parkingCode = 2;
+  string attendantId = 3;
+  string driverEmail = 4;
+}
+
+message PlateRequest {
+  string plateNumber = 1;
+}
+
+message PaginationRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message ReportFilter {
+  string startDate = 1;
+  string endDate = 2;
+  string parkingCode = 3;
+  int32 page = 4;
+  int32 limit = 5;
+}
+
+message TicketResponse {
+  string ticketId = 1;
+  string plateNumber = 2;
+  string parkingCode = 3;
+  string parkingName = 4;
+  string entryTime = 5;
+  double feePerHour = 6;
+  string message = 7;
+}
+
+message BillResponse {
+  string ticketId = 1;
+  string plateNumber = 2;
+  string parkingName = 3;
+  string entryTime = 4;
+  string exitTime = 5;
+  double durationHours = 6;
+  double feePerHour = 7;
+  double totalAmount = 8;
+  string message = 9;
+}
+
+message TransactionResponse {
+  string id = 1;
+  string ticketId = 2;
+  string plateNumber = 3;
+  string parkingCode = 4;
+  string parkingName = 5;
+  string entryTime = 6;
+  string exitTime = 7;
+  double durationHours = 8;
+  double feePerHour = 9;
+  double chargedAmount = 10;
+  string status = 11;
+  string attendantEntryId = 12;
+  string attendantExitId = 13;
+  string createdAt = 14;
+  string updatedAt = 15;
+}
+
+message PaginatedTransactions {
+  repeated TransactionResponse data = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+  int32 totalPages = 5;
+}

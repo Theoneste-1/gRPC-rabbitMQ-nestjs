@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package reporting;
+
+service ReportingService {
+  rpc GetRevenueReport(ReportFilter) returns (RevenueReport);
+  rpc GetEntriesReport(ReportFilter) returns (PaginatedEntriesReport);
+  rpc GetExitsReport(ReportFilter) returns (PaginatedExitsReport);
+  rpc GetOccupancyReport(ReportFilter) returns (OccupancyReport);
+}
+
+// ── Requests ─────────────────────────────────────────────
+message ReportFilter {
+  string startDate    = 1;  // ISO 8601 format
+  string endDate      = 2;  // ISO 8601 format
+  string parkingCode  = 3;  // Optional
+  int32  page         = 4;
+  int32  limit        = 5;
+  string sortBy       = 6;  // Optional: date, amount
+  string sortOrder    = 7;  // asc or desc
+}
+
+// ── Responses ────────────────────────────────────────────
+message RevenueReport {
+  double totalRevenue       = 1;
+  int32  totalExits         = 2;
+  int32  totalCarsEntered   = 3;
+  double averageRevenue     = 4;
+  string period             = 5;
+  repeated RevenueBySite    revenueBySite = 6;
+}
+
+message RevenueBySite {
+  string parkingCode   = 1;
+  string parkingName   = 2;
+  double revenue       = 3;
+  int32  carCount      = 4;
+}
+
+message EntrySummary {
+  string plateNumber   = 1;
+  string parkingCode   = 2;
+  string parkingName   = 3;
+  string entryTime     = 4;  // ISO 8601
+  string createdAt     = 5;
+}
+
+message PaginatedEntriesReport {
+  repeated EntrySummary data    = 1;
+  int32                 total   = 2;
+  int32                 page    = 3;
+  int32                 limit   = 4;
+  int32                 pages   = 5;
+}
+
+message ExitSummary {
+  string transactionId  = 1;
+  string plateNumber    = 2;
+  string parkingCode    = 3;
+  string parkingName    = 4;
+  string entryTime      = 5;  // ISO 8601
+  string exitTime       = 6;  // ISO 8601
+  double durationHours  = 7;
+  double chargedAmount  = 8;
+}
+
+message PaginatedExitsReport {
+  repeated ExitSummary  data           = 1;
+  int32                 total          = 2;
+  int32                 page           = 3;
+  int32                 limit          = 4;
+  int32                 pages          = 5;
+  double                totalCollected = 6;
+}
+
+message OccupancyRecord {
+  string parkingCode      = 1;
+  string parkingName      = 2;
+  double averageOccupancy = 3;
+  string peakHour         = 4;
+}
+
+message OccupancyReport {
+  repeated OccupancyRecord data   = 1;
+  string                   period = 2;
+}

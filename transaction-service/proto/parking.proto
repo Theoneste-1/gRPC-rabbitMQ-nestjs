@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package parking;
+
+service ParkingService {
+  rpc RegisterParking (RegisterParkingRequest) returns (ParkingResponse);
+  rpc GetAllParkings   (GetAllParkingsRequest)  returns (ParkingListResponse);
+  rpc GetParkingByCode (GetParkingByCodeRequest) returns (ParkingResponse);
+  rpc UpdateAvailableSpaces (UpdateSpacesRequest) returns (ParkingResponse);
+}
+
+message RegisterParkingRequest {
+  string code        = 1;
+  string name        = 2;
+  string location    = 3;
+  int32  totalSpaces = 4;
+  double feePerHour  = 5;
+}
+
+message GetAllParkingsRequest {
+  int32 page  = 1;
+  int32 limit = 2;
+}
+
+message GetParkingByCodeRequest {
+  string code = 1;
+}
+
+message UpdateSpacesRequest {
+  string code  = 1;
+  int32  delta = 2;
+}
+
+message ParkingResponse {
+  string id              = 1;
+  string code            = 2;
+  string name            = 3;
+  string location        = 4;
+  int32  totalSpaces     = 5;
+  int32  availableSpaces = 6;
+  double feePerHour      = 7;
+  string createdAt       = 8;
+  string updatedAt       = 9;
+}
+
+message ParkingListResponse {
+  repeated ParkingResponse data       = 1;
+  int32                    total      = 2;
+  int32                    page       = 3;
+  int32                    limit      = 4;
+  int32                    totalPages = 5;
+}
